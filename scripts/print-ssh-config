@@ -1,0 +1,60 @@
+#!/usr/bin/env bash
+##############################################################################
+# config
+SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &> /dev/null && pwd)
+CONFIG_DIR="$SCRIPT_DIR/../conf/"
+
+##############################################################################
+# vars
+ENV_CONF="$CONFIG_DIR/env.yaml"
+
+if ! [ -f $ENV_CONF ]; then
+    echo "Can not access $ENV_CONF"
+    exit 1
+fi
+
+IP_BASE="10.14.0"
+SSH_USER="deploy"
+
+##############################################################################
+# functions
+function print_comment
+{
+    echo ""
+    echo "### Automatically generated SSH Config ###"
+    echo ""
+}
+
+function print_host_entry
+{
+    cat <<EOF
+Host ${HOSTNAME} ${IP}
+    Hostname              ${IP}
+    User                  ${SSH_USER}
+    StrictHostKeyChecking no
+    UserKnownHostsFile    /dev/null
+
+EOF
+
+}
+##############################################################################
+# go
+
+print_comment
+
+cat "$ENV_CONF" | yq -r '.server_conf[] | (.hostname + " " + (.id | tostring))' | while read -r HOSTNAME ID; do
+
+    [[ -z "$HOSTNAME" || "$HOSTNAME" == "null" ]] && continue
+
+    IP="${IP_BASE}.${ID}"
+
+    print_host_entry
+done
+
+cat <<EOF
+Host deployment
+    AddKeysToAgent yes
+    ForwardAgent   yes
+EOF
+
+print_comment

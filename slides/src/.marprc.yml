@@ -1,0 +1,10 @@
+html: true
+theme: default
+allowLocalFiles: true
+parallel: 1
+inputDir: ./
+output: ../dist/
+options:
+  emoji:
+    shortcode: false
+    unicode: false

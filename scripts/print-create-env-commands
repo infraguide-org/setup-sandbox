@@ -1,0 +1,112 @@
+#!/usr/bin/env python3
+##############################################################################
+# libs
+import ipaddress
+import json
+import pathlib
+import subprocess
+import yaml
+
+##############################################################################
+# config
+
+script_dir = pathlib.Path(__file__).parent.resolve()
+config_dir = script_dir.parent / "conf"
+
+##############################################################################
+# functions
+def generate_ip(base_cidr, vm_id):
+    if not base_cidr or not vm_id:
+        return ""
+    try:
+        if "/" not in str(base_cidr):
+            return str(base_cidr)
+        iface = ipaddress.ip_interface(base_cidr)
+        ip_parts = str(iface.ip).split('.')
+        ip_parts[3] = str(vm_id)
+        return f"{'.'.join(ip_parts)}/{iface.network.prefixlen}"
+    except Exception:
+        return str(base_cidr)
+
+##############################################################################
+# go
+with open(config_dir  / 'env.yaml', 'r') as f:
+    env = yaml.safe_load(f)
+
+server_list = env.get('server_conf', [])
+network_map = env.get('network_conf', {})
+
+sorted_net_keys = sorted(network_map.keys())
+
+for server in server_list:
+    vm_id          = server.get('id')
+    hostname       = server.get('hostname')
+    domain         = server.get('domain')
+    netaddr_config = server.get('netaddr', "auto")
+    command        = server.get('command', "")
+    airgapped      = server.get('airgapped', "false")
+
+    netconf_obj = {}
+
+    for net_key in server.get('networks', []):
+        net_info = network_map.get(net_key)
+        if not net_info: continue
+
+        net_id = sorted_net_keys.index(net_key)
+
+        iface = net_info.get('iface')
+        iface_details = {}
+
+        is_auto = False
+        override = None
+
+        if netaddr_config == "auto":
+            is_auto = True
+        elif isinstance(netaddr_config, dict):
+            if net_key not in netaddr_config:
+                is_auto = True
+            else:
+                override = netaddr_config.get(net_key)
+                if override == "auto":
+                    is_auto = True
+                elif override is None:
+                    is_auto = False
+                    override = {}
+
+        if is_auto:
+            addr = net_info.get('addr')
+            if addr:
+                iface_details["ip"] = generate_ip(addr, vm_id)
+
+            gw = net_info.get('gateway')
+            if gw:
+                iface_details["gw"] = gw.split('/')[0]
+
+        elif isinstance(override, dict):
+            if override.get('ip'):
+                iface_details["ip"] = override["ip"]
+
+            if override.get('gateway'):
+                iface_details["gw"] = override["gateway"].split('/')[0]
+
+            if 'mtu' in override:
+                iface_details["mtu"] = str(override["mtu"])
+
+        iface_details['macaddr'] = f"bc:24:11:99:{net_id:02x}:{vm_id:02x}"
+        netconf_obj[iface] = iface_details
+
+    netconf_json = json.dumps(netconf_obj)
+    cmd = [
+        "create-vm",
+        "--id",      str(vm_id),
+        "--name",    hostname+"."+domain,
+        "--cpu",     str(server.get('cpu', 1)),
+        "--ram",     str(server.get('ram', 2048)),
+        "--disks",   "'" + json.dumps(server.get('disks', [])) + "'",
+        "--netconf", "'" + netconf_json + "'",
+        "--command", "'" + command + "'",
+        "--airgapped", "'" + str(airgapped).lower() + "'"
+    ]
+
+    print(" ".join(cmd))
+    # subprocess.run(command, check=True)
