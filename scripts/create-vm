@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+# Source: https://github.com/infraguide-org/setup-sandbox
+# Copyright (c) 2026 infraguide.org, MIT License
 ##############################################################################
 # config
 SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &> /dev/null && pwd)
@@ -338,7 +340,7 @@ cat <<EOF >> "$VENDOR_FILE"
     owner:       root:root
     permissions: '0644'
     content: |
-      export lab_RAW_BASE_PATH=https://raw.githack.com/codecap/openstack-workshop/main
+      export lab_RAW_BASE_PATH=https://nfgd.net/raw/lab-openstack/modules
       export lab_PROXY=http://proxy.lab.nfgd.net:3128
       export lab_INFRA_NODES_GR1="dns|proxy|registry"
       export lab_INFRA_NODES_GR2="deployment|recorder"
