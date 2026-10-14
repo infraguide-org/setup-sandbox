@@ -20,7 +20,7 @@ sed -e "s/^harbor_admin_password:.*/harbor_admin_password: $HARBOR_PASS/" -i har
 # change default data path
 sed -e "s#^data_volume:.*#data_volume: $HARBOR_DATA_PATH#" -i harbor.yml
 # change the hostname
-sed -e "s/^hostname:.*/hostname: registry.wrx.sckt.net/"   -i harbor.yml
+sed -e "s/^hostname:.*/hostname: registry.lab.nfgd.net/"   -i harbor.yml
 # switch off https
 sed '/^https:/,/private_key:/ s/^/#/'                      -i harbor.yml
 

@@ -1,9 +1,10 @@
 ---
-title:       Preparations
-description: OpenStack & Ceph
+title:       Setup Sandbox
+description: Setup a sandbox for infraguid labs
 author:      infraguide.org
 keywords:    openstack,ceph,workshops,operations,troubleshoouting
 transition: cover
+order: 1
 backgroundImage: url(https://infraguide.org/assets/marp/background.jpg)
 paginate: true
 footer: "[infraguide.org](https://infraguide.org) | Questions or need a guided workshop? → ping@infraguide.org | [Imprint](https://infraguide.org/imprint/) · [Privacy](https://infraguide.org/privacy/)"
@@ -61,75 +62,6 @@ architecture-beta
 </div>
 
 ---
-# Deployment Models
-
-- **Baremetal** - all servers listed are baremetal machines, at least a single
-switch to interconnect and an instance for deployment (VM, laptop, a small
-baremetal machine)
-- **Hyperconverged** - at least a single baremetal node, to create all listed
-servers as VMs and additionally an instance for deployment.
-- **Hybrid** - some baremetal nodes to virtualize servers (controllers, network, infrastructure) and some to use to deliver performance (compute, Ceph OSD nodes)
-
-**Baremetal** and **Hybrid** approaches can be used for production environments
-
-
----
-# Hyperconverged Environments
-**Advantages**:
-- simple and fast
-- single baremetal node needed
-- all listed servers backed by VMs
-- all listed networks backed by Open vSwitch / Linux Bridges
-- no physical switch needed
-
-**Disadvantages**:
-- less insights into networking
-- less performance possible
-
-
----
-# Approaches to create a hyperconverged environment
-We will need at least a single baremetal node with either:
-- KVM | libvirt
-- single-node OpenStack environment
-- single-node Proxmox environment
-- single-node Incus environment
-...
-
-
----
-# Proxmox
-![bg right:40% 30%](https://infraguide.org/assets/marp/pics/preparations/icon-tools-hammer.svg)
-
-```bash
-# On the baremetal node as root                                             📋
-WRX_RAW_BASE_PATH=https://raw.githack.com/codecap/openstack-workshop/refs/heads/main
-CONF_SCRIPT=$WRX_RAW_BASE_PATH/010_preparations/scripts/proxmox-install.sh
-
-# Review
-curl -sS -L $CONF_SCRIPT
-
-# Execute
-curl -sS -L $CONF_SCRIPT | bash
-```
-
----
-# Prepare a Template VM for Guests
-![bg right:40% 50%](https://infraguide.org/assets/marp/pics/preparations/icon-proxmox.svg)
-
-```bash
-# On the baremetal node as root                                             📋
-WRX_RAW_BASE_PATH=https://raw.githack.com/codecap/openstack-workshop/refs/heads/main
-CONF_SCRIPT=$WRX_RAW_BASE_PATH/010_preparations/scripts/proxmox-template.sh
-
-# Review
-curl -sS -L $CONF_SCRIPT
-
-# Execute
-curl -sS -L $CONF_SCRIPT | bash
-```
-
----
 # Configuration Data
 ![bg right:45% 25%](https://infraguide.org/assets/marp/pics/preparations/icon-config.svg)
 [Link](https://github.com/codecap/openstack-workshop/blob/main/conf/env.yaml)
@@ -182,7 +114,7 @@ td:first-child {
 
 
 ```bash
-create-vm --id 10 --name dns.wrx.sckt.net --cpu 1 --ram 4096 --disks '[8]' --netconf '
+create-vm --id 10 --name dns.lab.sckt.net --cpu 1 --ram 4096 --disks '[8]' --netconf '
      {
        "mgmt0": {"ip": "10.14.0.10/24",  "macaddr": "bc:24:11:99:04:0a"},
        "srvc0": {"ip": "10.34.10.10/24", "macaddr": "bc:24:11:99:06:0a"}
@@ -204,20 +136,30 @@ print-destroy-env-commands | grep <NODE_FILTER> | bash
 print-create-env-commands  | grep <NODE_FILTER> | bash
 ```
 
+
+---
+# Prepare the sandbox
+![bg right:40% 30%](https://infraguide.org/assets/marp/pics/preparations/icon-tools-hammer.svg)
+
+```bash
+# On the bare-metal node as root
+
+# Install and Configure 
+curl -sSL nfgd.net/setup/sandbox | bash
+
+# Import a VM to be used as template
+curl -sSL nfgd.net/setup/template-vm | bash
+```
+
 ---
 # Create a workshop environment
 ![bg right:40% 30%](https://infraguide.org/assets/marp/pics/preparations/icon-tools-hammer.svg)
 
 ```bash
 # On the baremetal node as root                                             📋
-WRX_RAW_BASE_PATH=https://raw.githack.com/codecap/openstack-workshop/refs/heads/main
-CONF_SCRIPT=$WRX_RAW_BASE_PATH/010_preparations/scripts/environment-create.sh
 
-# Review
-curl -sS -L $CONF_SCRIPT
-
-# Execute
-curl -sS -L $CONF_SCRIPT | bash
+# Create the full lab environment
+curl -sSL nfgd.net/setup/lab-env
 ```
 
 ---

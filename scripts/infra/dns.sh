@@ -31,8 +31,8 @@ except-interface=lo
 bind-interfaces
 
 # Local Domain Settings
-local=/wrx.sckt.net/
-domain=wrx.sckt.net
+local=/lab.nfgd.net/
+domain=lab.nfgd.net
 expand-hosts
 # Cache size
 cache-size=1000
@@ -47,81 +47,81 @@ mkdir -p /var/lib/dnsmasq/hosts.d
 
 cat > /var/lib/dnsmasq/hosts.d/hosts <<EOF
 # mgmt
-10.14.0.10   dns.mgmt.wrx.sckt.net
-10.14.0.17   registry.mgmt.wrx.sckt.net
-10.14.0.19   proxy.mgmt.wrx.sckt.net
-10.14.0.24   deployment.mgmt.wrx.sckt.net
-10.14.0.25   recorder.mgmt.wrx.sckt.net
-10.14.0.32   controller01.mgmt.wrx.sckt.net
-10.14.0.33   controller02.mgmt.wrx.sckt.net
-10.14.0.34   controller03.mgmt.wrx.sckt.net
-10.14.0.40   network01.mgmt.wrx.sckt.net
-10.14.0.41   network02.mgmt.wrx.sckt.net
-10.14.0.42   network03.mgmt.wrx.sckt.net
-10.14.0.48   monitor01.mgmt.wrx.sckt.net
-10.14.0.52   testing.mgmt.wrx.sckt.net
-10.14.0.64   compute01.mgmt.wrx.sckt.net
-10.14.0.65   compute02.mgmt.wrx.sckt.net
-10.14.0.66   compute03.mgmt.wrx.sckt.net
-10.14.0.67   compute04.mgmt.wrx.sckt.net
-10.14.0.72   compute11.mgmt.wrx.sckt.net
-10.14.0.73   compute12.mgmt.wrx.sckt.net
-10.14.0.74   compute13.mgmt.wrx.sckt.net
-10.14.0.75   compute14.mgmt.wrx.sckt.net
-10.14.0.128  cephmon01.mgmt.wrx.sckt.net
-10.14.0.129  cephmon02.mgmt.wrx.sckt.net
-10.14.0.130  cephmon03.mgmt.wrx.sckt.net
-10.14.0.136  cephgra01.mgmt.wrx.sckt.net
-10.14.0.144  cephosd01.mgmt.wrx.sckt.net
-10.14.0.145  cephosd02.mgmt.wrx.sckt.net
-10.14.0.146  cephosd03.mgmt.wrx.sckt.net
-10.14.0.147  cephosd04.mgmt.wrx.sckt.net
-10.14.0.148  cephosd05.mgmt.wrx.sckt.net
-10.14.0.149  cephosd06.mgmt.wrx.sckt.net
-10.14.0.150  cephosd07.mgmt.wrx.sckt.net
-10.14.0.151  cephosd08.mgmt.wrx.sckt.net
+10.14.0.10   dns.mgmt.lab.nfgd.net
+10.14.0.17   registry.mgmt.lab.nfgd.net
+10.14.0.19   proxy.mgmt.lab.nfgd.net
+10.14.0.24   deployment.mgmt.lab.nfgd.net
+10.14.0.25   recorder.mgmt.lab.nfgd.net
+10.14.0.32   controller01.mgmt.lab.nfgd.net
+10.14.0.33   controller02.mgmt.lab.nfgd.net
+10.14.0.34   controller03.mgmt.lab.nfgd.net
+10.14.0.40   network01.mgmt.lab.nfgd.net
+10.14.0.41   network02.mgmt.lab.nfgd.net
+10.14.0.42   network03.mgmt.lab.nfgd.net
+10.14.0.48   monitor01.mgmt.lab.nfgd.net
+10.14.0.52   testing.mgmt.lab.nfgd.net
+10.14.0.64   compute01.mgmt.lab.nfgd.net
+10.14.0.65   compute02.mgmt.lab.nfgd.net
+10.14.0.66   compute03.mgmt.lab.nfgd.net
+10.14.0.67   compute04.mgmt.lab.nfgd.net
+10.14.0.72   compute11.mgmt.lab.nfgd.net
+10.14.0.73   compute12.mgmt.lab.nfgd.net
+10.14.0.74   compute13.mgmt.lab.nfgd.net
+10.14.0.75   compute14.mgmt.lab.nfgd.net
+10.14.0.128  cephmon01.mgmt.lab.nfgd.net
+10.14.0.129  cephmon02.mgmt.lab.nfgd.net
+10.14.0.130  cephmon03.mgmt.lab.nfgd.net
+10.14.0.136  cephgra01.mgmt.lab.nfgd.net
+10.14.0.144  cephosd01.mgmt.lab.nfgd.net
+10.14.0.145  cephosd02.mgmt.lab.nfgd.net
+10.14.0.146  cephosd03.mgmt.lab.nfgd.net
+10.14.0.147  cephosd04.mgmt.lab.nfgd.net
+10.14.0.148  cephosd05.mgmt.lab.nfgd.net
+10.14.0.149  cephosd06.mgmt.lab.nfgd.net
+10.14.0.150  cephosd07.mgmt.lab.nfgd.net
+10.14.0.151  cephosd08.mgmt.lab.nfgd.net
 
 # strg
-10.20.21.128  cephmon01.strg.wrx.sckt.net
-10.20.21.129  cephmon02.strg.wrx.sckt.net
-10.20.21.130  cephmon03.strg.wrx.sckt.net
-10.20.21.136  cephgra01.strg.wrx.sckt.net
-10.20.21.144  cephosd01.strg.wrx.sckt.net
-10.20.21.145  cephosd02.strg.wrx.sckt.net
-10.20.21.128  cephmon01.strg.wrx.sckt.net
-10.20.21.146  cephosd03.strg.wrx.sckt.net
-10.20.21.147  cephosd04.strg.wrx.sckt.net
-10.20.21.148  cephosd05.strg.wrx.sckt.net
-10.20.21.149  cephosd06.strg.wrx.sckt.net
-10.20.21.150  cephosd07.strg.wrx.sckt.net
-10.20.21.151  cephosd08.strg.wrx.sckt.net
+10.20.21.128  cephmon01.strg.lab.nfgd.net
+10.20.21.129  cephmon02.strg.lab.nfgd.net
+10.20.21.130  cephmon03.strg.lab.nfgd.net
+10.20.21.136  cephgra01.strg.lab.nfgd.net
+10.20.21.144  cephosd01.strg.lab.nfgd.net
+10.20.21.145  cephosd02.strg.lab.nfgd.net
+10.20.21.128  cephmon01.strg.lab.nfgd.net
+10.20.21.146  cephosd03.strg.lab.nfgd.net
+10.20.21.147  cephosd04.strg.lab.nfgd.net
+10.20.21.148  cephosd05.strg.lab.nfgd.net
+10.20.21.149  cephosd06.strg.lab.nfgd.net
+10.20.21.150  cephosd07.strg.lab.nfgd.net
+10.20.21.151  cephosd08.strg.lab.nfgd.net
 # strg services
-10.20.21.135  s3.strg.wrx.sckt.net
+10.20.21.135  s3.strg.lab.nfgd.net
 
 # os
 
 # os services
-10.20.8.35    int.os.wrx.sckt.net
+10.20.8.35    int.os.lab.nfgd.net
 
 # services
-10.34.10.10   dns.services.wrx.sckt.net
-10.34.10.17   registry.services.wrx.sckt.net
-10.34.10.19   proxy.services.wrx.sckt.net
-10.34.10.25   recorder.services.wrx.sckt.net
-10.34.10.35   dashboard.openstack.services.wrx.sckt.net
-10.34.10.35   keystone.os.svc.wrx.sckt.net
-# 10.34.10.35    novncproxy.os.svc.wrx.sckt.net
-10.20.8.35    novncproxy.os.svc.wrx.sckt.net
-10.34.10.135  dashboard.ceph.services.wrx.sckt.net
-10.34.10.135  s3.storage.wrx.sckt.net s3.svc.wrx.sckt.net s3.services.wrx.sckt.net
+10.34.10.10   dns.services.lab.nfgd.net
+10.34.10.17   registry.services.lab.nfgd.net
+10.34.10.19   proxy.services.lab.nfgd.net
+10.34.10.25   recorder.services.lab.nfgd.net
+10.34.10.35   dashboard.openstack.services.lab.nfgd.net
+10.34.10.35   keystone.os.svc.lab.nfgd.net
+# 10.34.10.35    novncproxy.os.svc.lab.nfgd.net
+10.20.8.35    novncproxy.os.svc.lab.nfgd.net
+10.34.10.135  dashboard.ceph.services.lab.nfgd.net
+10.34.10.135  s3.storage.lab.nfgd.net s3.svc.lab.nfgd.net s3.services.lab.nfgd.net
 
 # infra nodes
-10.14.0.8     hypervisor.wrx.sckt.net
-10.14.0.10    dns.wrx.sckt.net
-10.14.0.17    registry.wrx.sckt.net
-10.14.0.19    proxy.wrx.sckt.net
-10.14.0.24    deployment.wrx.sckt.net
-10.14.0.25    recorder.wrx.sckt.net
+10.14.0.8     hypervisor.lab.nfgd.net
+10.14.0.10    dns.lab.nfgd.net
+10.14.0.17    registry.lab.nfgd.net
+10.14.0.19    proxy.lab.nfgd.net
+10.14.0.24    deployment.lab.nfgd.net
+10.14.0.25    recorder.lab.nfgd.net
 EOF
 
 echo "Restarting Dnsmasq..."

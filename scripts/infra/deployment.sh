@@ -10,10 +10,10 @@ SYS_USER_NAME=deploy
 
 sudo -i -u $SYS_USER_NAME bash << "AS_SYS_USER"
 cat >> ~/.ssh/config <<EOF
-Host hypervisor hypervisor.wrx.sckt.net
+Host hypervisor hypervisor.lab.nfgd.net
   User root
 
-Host *.mgmt *.mgmt.wrx.sckt.net *.wrx.sckt.net
+Host *.mgmt *.mgmt.lab.nfgd.net *.lab.nfgd.net
   User  deploy
 
 Host *
@@ -26,7 +26,7 @@ pipx install tmuxp
 
 cat >> ~/.profile <<EOF
 
-alias wrx-stack='tmuxp load -y ~/openstack-workshop/conf/tmuxp.yaml'
+alias lab-stack='tmuxp load -y ~/openstack-workshop/conf/tmuxp.yaml'
 EOF
 
 # cd ~
@@ -56,7 +56,7 @@ fi
 export ARA_HOME=$VIRTUAL_ENV/lib/python3.12/site-packages/ara
 
 
-ADMIN_OPENRC_FILE=$OPENSTACK_DIR/custom-config/wrx/admin-openrc.sh
+ADMIN_OPENRC_FILE=$OPENSTACK_DIR/custom-config/lab/admin-openrc.sh
 if [ -f $ADMIN_OPENRC_FILE ]
 then
   source  $ADMIN_OPENRC_FILE

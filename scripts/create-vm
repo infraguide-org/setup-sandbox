@@ -81,7 +81,7 @@ fi
 #
 cat <<EOF >> "$VENDOR_FILE"
   - |
-    cat > /etc/netplan/70-wrx-rename-ifaces.yaml.off <<EOF
+    cat > /etc/netplan/70-lab-rename-ifaces.yaml.off <<EOF
     network:
       version: 2
       ethernets:
@@ -133,9 +133,9 @@ EOF
 # if [[ "$AIRGAPPED" =~ ^(soft)$ ]]
 #   then
 #   cat <<EOF >> "$VENDOR_FILE"
-# proxy:       http://proxy.wrx.sckt.net:3128
-# https_proxy: http://proxy.wrx.sckt.net:3128
-# no_proxy:    localhost,127.0.0.1,.wrx.sckt.net,169.254.169.254
+# proxy:       http://proxy.lab.nfgd.net:3128
+# https_proxy: http://proxy.lab.nfgd.net:3128
+# no_proxy:    localhost,127.0.0.1,.lab.nfgd.net,169.254.169.254
 # EOF
 # fi
 
@@ -148,7 +148,7 @@ if [[ "$AIRGAPPED" =~ ^(true|yes|soft)$ ]]
   #
   cat <<EOF >> "$VENDOR_FILE"
 apt:
-  proxy: http://proxy.wrx.sckt.net:3128
+  proxy: http://proxy.lab.nfgd.net:3128
 EOF
 fi
 
@@ -176,7 +176,7 @@ runcmd:
   - growpart  /dev/sda  1
   - resize2fs /dev/sda1
   - touch /etc/cloud/cloud-init.disabled
-  - mv /etc/netplan/70-wrx-rename-ifaces.yaml.off /etc/netplan/70-wrx-rename-ifaces.yaml
+  - mv /etc/netplan/70-lab-rename-ifaces.yaml.off /etc/netplan/70-lab-rename-ifaces.yaml
   - netplan apply
   - systemctl restart systemd-timesyncd
 EOF
@@ -213,7 +213,7 @@ write_files:
     permissions: '0644'
     content: |
       {
-        "insecure-registries": ["registry.services.wrx.sckt.net",   "registry.wrx.sckt.net"]
+        "insecure-registries": ["registry.services.lab.nfgd.net",   "registry.lab.nfgd.net"]
       }
   - path:        /etc/apt/keyrings/docker.asc
     owner:       root:root
@@ -324,24 +324,24 @@ if [ "$AIRGAPPED" = "soft" ]
     owner:       root:root
     permissions: '0644'
     content: |
-      export http_proxy="http://proxy.wrx.sckt.net:3128"
-      export https_proxy="http://proxy.wrx.sckt.net:3128"
-      export no_proxy="localhost,127.0.0.1,.wrx.sckt.net,169.254.169.254"
-      export HTTP_PROXY="http://proxy.wrx.sckt.net:3128"
-      export HTTPS_PROXY="http://proxy.wrx.sckt.net:3128"
-      export NO_PROXY="localhost,127.0.0.1,.wrx.sckt.net,169.254.169.254"
+      export http_proxy="http://proxy.lab.nfgd.net:3128"
+      export https_proxy="http://proxy.lab.nfgd.net:3128"
+      export no_proxy="localhost,127.0.0.1,.lab.nfgd.net,169.254.169.254"
+      export HTTP_PROXY="http://proxy.lab.nfgd.net:3128"
+      export HTTPS_PROXY="http://proxy.lab.nfgd.net:3128"
+      export NO_PROXY="localhost,127.0.0.1,.lab.nfgd.net,169.254.169.254"
 EOF
 fi
 
 cat <<EOF >> "$VENDOR_FILE"
-  - path:        /etc/profile.d/wrx.sh
+  - path:        /etc/profile.d/lab.sh
     owner:       root:root
     permissions: '0644'
     content: |
-      export WRX_RAW_BASE_PATH=https://raw.githack.com/codecap/openstack-workshop/main
-      export WRX_PROXY=http://proxy.wrx.sckt.net:3128
-      export WRX_INFRA_NODES_GR1="dns|proxy|registry"
-      export WRX_INFRA_NODES_GR2="deployment|recorder"
+      export lab_RAW_BASE_PATH=https://raw.githack.com/codecap/openstack-workshop/main
+      export lab_PROXY=http://proxy.lab.nfgd.net:3128
+      export lab_INFRA_NODES_GR1="dns|proxy|registry"
+      export lab_INFRA_NODES_GR2="deployment|recorder"
 EOF
 
 #

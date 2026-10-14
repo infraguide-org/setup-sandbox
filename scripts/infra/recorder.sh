@@ -1,5 +1,5 @@
 #!/bin/bash
-REGISTRY=registry.wrx.sckt.net:80
+REGISTRY=registry.lab.nfgd.net:80
 IMAGE_NAME=$REGISTRY/quay/osism/ara-server:1.6.1
 
 apt-get update; apt-get install podman -y
@@ -18,7 +18,7 @@ podman volume create ara
 
 mkdir /etc/ara
 cat > /etc/ara/environment <<EOF
-ARA_ALLOWED_HOSTS=['127.0.0.1', 'loalhost', '10.14.0.25', 'recorder.services.wrx.sckt.net', 'recorder.wrx.sckt.net']
+ARA_ALLOWED_HOSTS=['127.0.0.1', 'loalhost', '10.14.0.25', 'recorder.services.lab.nfgd.net', 'recorder.lab.nfgd.net']
 # ARA_DEBUG=True
 ARA_API_CLIENT=http
 ARA_API_PASSWORD=P@ssword

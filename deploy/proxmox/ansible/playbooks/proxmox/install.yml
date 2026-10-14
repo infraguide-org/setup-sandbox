@@ -1,0 +1,64 @@
+---
+- hosts: all
+  name: Set Prerequisites
+  gather_facts: true
+  tasks:
+    - name: Remove loopback entry for hostname
+      ansible.builtin.lineinfile:
+        path: /etc/hosts
+        regexp: "^127[0-9.]+\\s+{{ansible_facts['hostname']}}"
+        state: absent
+    - name: Ensure hostname points to default IPv4 address
+      ansible.builtin.lineinfile:
+        path: /etc/hosts
+        regexp: "^.*\\b{{ ansible_facts['hostname'] }}\\b.*"
+        line: "{{ ansible_facts['default_ipv4']['address'] }} {{ ansible_facts['fqdn'] }} {{ ansible_facts['hostname'] }}"
+        state: present
+        backup: true
+
+- name: Configure systemd user ssh-agent
+  hosts: all
+  tasks:
+    - name: Enable lingering for user so user services run without an active session
+      ansible.builtin.command:
+        cmd: "loginctl enable-linger {{ ansible_facts['user_id'] }}"
+      args:
+        creates: "/var/lib/systemd/linger/{{ ansible_facts['user_id'] }}"
+      become: true
+
+    - name: Enable and start ssh-agent.socket systemd user unit
+      ansible.builtin.systemd_service:
+        name: ssh-agent.socket
+        enabled: true
+        state: started
+        scope: user
+
+    - name: Ensure SSH_AUTH_SOCK is set in ~/.bashrc
+      ansible.builtin.lineinfile:
+        path: "{{ ansible_facts['user_dir'] }}/.bashrc"
+        line: 'export SSH_AUTH_SOCK="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}/openssh_agent"'
+        regexp: '^export SSH_AUTH_SOCK='
+        state: present
+
+- hosts: all
+  gather_facts: yes
+  environment:
+    PATH: "/lib/systemd:/usr/lib/systemd:{{ ansible_env.PATH }}"
+  roles:
+    - role: debops.debops.resources
+    - role: debops.debops.ntp
+  post_tasks:
+    - name: 'Restart nftables'
+      service:
+        name: nftables
+        enabled: true
+        state: restarted
+    - name: Enable bridge forwarding service
+      ansible.builtin.systemd:
+        name: lab-bridge-forwarding.service
+        enabled: true
+        daemon_reload: true
+- hosts: all
+  gather_facts: yes
+  roles:
+    - role: lae.proxmox

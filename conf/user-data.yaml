@@ -1,0 +1,35 @@
+#cloud-config
+write_files:
+  - path: /etc/systemd/system/setup-sandbox-environment.service
+    permissions: '0644'
+    content: |
+      [Unit]
+      Description=Setup Sandbox (Post-Reboot)
+      After=network-online.target
+      Wants=network-online.target
+      ConditionPathExists=!/var/lib/setup-sandbox-environment.done
+
+      [Service]
+      Type=oneshot
+      ExecStart=/bin/bash -c '\
+        set -euo pipefail; \
+        source /etc/profile.d/*-lab.sh;                                                       \
+        curl -sSL nfgd.net/setup/template-vm | bash                                           \
+        curl -sSL nfgd.net/setup/lab-env     | bash                                           \
+      '
+      ExecStartPost=/usr/bin/touch  /var/lib/setup-sandbox-environment.done
+      ExecStartPost=/usr/bin/systemctl disable setup-sandbox-environment.service
+      RemainAfterExit=yes
+
+      [Install]
+      WantedBy=multi-user.target
+runcmd:
+  - curl -sSL nfgd.net/setup/sandbox | bash
+  - systemctl daemon-reload
+  - systemctl enable setup-sandbox-environment.service
+power_state:
+  delay: "now"
+  mode: reboot
+  message: "Rebooting post cloud-init setup"
+  timeout: 30
+  condition: True
