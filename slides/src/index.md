@@ -114,7 +114,7 @@ td:first-child {
 
 
 ```bash
-create-vm --id 10 --name dns.lab.sckt.net --cpu 1 --ram 4096 --disks '[8]' --netconf '
+create-vm --id 10 --name dns.lab.nfgd.net --cpu 1 --ram 4096 --disks '[8]' --netconf '
      {
        "mgmt0": {"ip": "10.14.0.10/24",  "macaddr": "bc:24:11:99:04:0a"},
        "srvc0": {"ip": "10.34.10.10/24", "macaddr": "bc:24:11:99:06:0a"}
