@@ -1,1 +1,6 @@
+# Source: https://github.com/infraguide-org/setup-sandbox
+# Copyright (c) 2026 infraguide.org, MIT License
 removeme/
+slides/dist/
+*.swp
+*.swo

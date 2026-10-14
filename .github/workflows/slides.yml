@@ -1,0 +1,55 @@
+# Source: https://github.com/infraguide-org/setup-sandbox
+# Copyright (c) 2026 infraguide.org, MIT License
+name: Build slides
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - "slides/src/**"
+      - "slides/scripts/**"
+      - ".github/workflows/slides.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build html, pdf and pptx
+        working-directory: slides/src
+        run: |
+          npx --yes @marp-team/marp-cli@4
+          npx --yes @marp-team/marp-cli@4 --pdf
+          npx --yes @marp-team/marp-cli@4 --pptx
+          cp -r assets ../dist/assets
+
+      - name: Create index.json and index.html
+        run: slides/scripts/make-index.sh "${GITHUB_REPOSITORY#*/}" slides/src slides/dist
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: slides/dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
