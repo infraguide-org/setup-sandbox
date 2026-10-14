@@ -340,10 +340,10 @@ cat <<EOF >> "$VENDOR_FILE"
     owner:       root:root
     permissions: '0644'
     content: |
-      export lab_RAW_BASE_PATH=https://nfgd.net/raw/lab-openstack/modules
-      export lab_PROXY=http://proxy.lab.nfgd.net:3128
-      export lab_INFRA_NODES_GR1="dns|proxy|registry"
-      export lab_INFRA_NODES_GR2="deployment|recorder"
+      export LAB_RAW_BASE_PATH=https://nfgd.net/raw/lab-openstack/modules
+      export LAB_PROXY=http://proxy.lab.nfgd.net:3128
+      export LAB_INFRA_NODES_GR1="dns|proxy|registry"
+      export LAB_INFRA_NODES_GR2="deployment|recorder"
 EOF
 
 #
