@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+# Source: https://github.com/infraguide-org/setup-sandbox
+# Copyright (c) 2026 infraguide.org, MIT License
 
 ##############################################################################
 # Tools
@@ -27,10 +29,10 @@ apt-get  install -y   \
 ##############################################################################
 # Checkout
 cd /root
-git clone https://github.com/codecap/openstack-workshop.git
+git clone https://github.com/infraguide-org/setup-sandbox.git
 
 # ssh
-cd openstack-workshop
+cd setup-sandbox
 ./scripts/print-ssh-config  >> ~/.ssh/config
 ssh-keygen -t ed25519 -N '' -f ~/.ssh/id_ed25519
 cat /root/.ssh/id_ed25519.pub >> /home/debian/.ssh/authorized_keys

@@ -1,3 +1,5 @@
+# Source: https://github.com/infraguide-org/setup-sandbox
+# Copyright (c) 2026 infraguide.org, MIT License
 ---
 ##############################################################################
 # network
@@ -174,9 +176,9 @@ resources__files:
   - path: '/etc/profile.d/60-lab.sh'
     content: |
       #!/usr/bin/env bash
-      if [ "$EUID" -eq 0 ] && [ -d "/root/openstack-workshop/scripts" ]; then
-        if [[ ":$PATH:" != *":/root/openstack-workshop/scripts:"* ]]; then
-            export PATH="/root/openstack-workshop/scripts:$PATH"
+      if [ "$EUID" -eq 0 ] && [ -d "/root/setup-sandbox/scripts" ]; then
+        if [[ ":$PATH:" != *":/root/setup-sandbox/scripts:"* ]]; then
+            export PATH="/root/setup-sandbox/scripts:$PATH"
         fi
       fi
 

@@ -64,7 +64,7 @@ architecture-beta
 ---
 # Configuration Data
 ![bg right:45% 25%](https://infraguide.org/assets/marp/pics/preparations/icon-config.svg)
-[Link](https://github.com/codecap/openstack-workshop/blob/main/conf/env.yaml)
+[Link](https://github.com/infraguide-org/lab-openstack/blob/main/conf/env.yaml)
 ```yaml
 resolve_conf:
   nameservers:
