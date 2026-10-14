@@ -1,4 +1,6 @@
 ---
+# Source: https://github.com/infraguide-org/setup-sandbox
+# Copyright (c) 2026 infraguide.org, MIT License
 title:       Setup Sandbox
 description: Setup a sandbox for infraguid labs
 author:      infraguide.org
