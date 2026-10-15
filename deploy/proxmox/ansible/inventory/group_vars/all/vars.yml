@@ -87,14 +87,14 @@ resources__files:
   - path:    '/etc/cloud/cloud-init.disabled'
     content: ""
 
-  - path:    '/etc/netplan/60-lab.yaml'
+  - path:    '/etc/netplan/60-lab.yaml.off'
     content: "{{netplan_conf | to_nice_yaml}}"
     owner: 'root'
     group: 'root'
     mode: '0600'
     notify: ['Restart systemd-networkd']
 
-  - path:    '/etc/netplan/70-private-net.yaml'
+  - path:    '/etc/netplan/70-private-net.yaml.off'
     owner: 'root'
     group: 'root'
     mode: '0600'
