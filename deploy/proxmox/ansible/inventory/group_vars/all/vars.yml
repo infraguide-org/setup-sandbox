@@ -112,9 +112,12 @@ resources__files:
 
   - path: '/etc/network/interfaces'
     content: |
-      {% for b in netplan_conf.network.bridges.keys() %}
+      {% for b, c in netplan_conf.network.bridges.items() %}
       auto {{b}}
       iface {{b}} inet static
+      {% for a in c.addresses | default([], true) %}
+        address {{a}}
+      {% endfor %}
         bridge_ports eth0
         bridge_stp off
         bridge_fd 0
