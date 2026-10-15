@@ -24,7 +24,7 @@ write_files:
       [Install]
       WantedBy=multi-user.target
 runcmd:
-  - LAB_NAME=$LAB_NAME curl -sSL nfgd.net/setup/sandbox | bash
+  - curl -sSL nfgd.net/setup/sandbox | LAB_NAME=$LAB_NAME bash
   - systemctl daemon-reload
   - systemctl enable setup-sandbox-environment.service
 power_state:
@@ -33,4 +33,3 @@ power_state:
   message: "Rebooting post cloud-init setup"
   timeout: 30
   condition: True
-
