@@ -44,7 +44,8 @@ mermaid.initialize({ startOnLoad: true, theme: 'default' });
 </script>
 
 
-# Preparations
+# Prepare a Bare-Metal Server to Host the Labs
+![bg right:45% 25%](https://infraguide.org/assets/logo/icon.svg)
 
 ---
 # Deployment
@@ -96,6 +97,7 @@ server_conf:
 
 ---
 # Scripts
+![bg right:45% 25%](https://infraguide.org/assets/logo/icon.svg)
 
 <style scoped>
 table, thead, tbody, tr, th, td {
