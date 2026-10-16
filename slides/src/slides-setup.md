@@ -177,10 +177,10 @@ curl -sSL nfgd.net/setup/$LAB_NAME   | bash
 
 ---
 # Access the Lab Environment
-![bg right:30% 30%](assets/pics/preparations/icon-identity-aware-proxy.svg)
+![bg right:40% 40%](assets/pics/preparations/icon-identity-aware-proxy.svg)
 
-The browser sends its traffic into a local port (`127.0.0.1:8888`), and SSH
-carries it through the hypervisor into the lab network.
+Browser traffic is sent to **127.0.0.1:8888**<br/>
+SSH carries it through the hypervisor into the lab network.<br/>
 
 ```text
 +-----------+  SSH  +------------+  SSH  +------------+     +-------------+
