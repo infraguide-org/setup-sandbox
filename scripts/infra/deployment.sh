@@ -2,11 +2,18 @@
 # Source: https://github.com/infraguide-org/setup-sandbox
 # Copyright (c) 2026 infraguide.org, MIT License
 
+set -e
+
+# no dialogs (debconf, needrestart) and no reading from stdin: the script itself
+# comes through the pipe of "curl | bash" and must not be consumed by apt
+export DEBIAN_FRONTEND=noninteractive
+export NEEDRESTART_MODE=a
+
 apt-get update
 
 apt-get install -y \
   crudini          \
-  pipx
+  pipx </dev/null
 
 SYS_USER_NAME=deploy
 

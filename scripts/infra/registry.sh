@@ -1,4 +1,9 @@
 #!/usr/bin/env bash
+# Source: https://github.com/infraguide-org/setup-sandbox
+# Copyright (c) 2026 infraguide.org, MIT License
+
+set -e
+
 HARBOR_USER="admin"
 HARBOR_PASS="Harbor12345"
 HARBOR_VERSION="2.10.0"
@@ -25,7 +30,7 @@ sed -e "s/^hostname:.*/hostname: registry.lab.nfgd.net/"   -i harbor.yml
 sed '/^https:/,/private_key:/ s/^/#/'                      -i harbor.yml
 
 # Install
-./install.sh ; sleep 15;
+./install.sh </dev/null ; sleep 15;
 
 
 # Setupt Proxy Repository

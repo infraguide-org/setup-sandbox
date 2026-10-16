@@ -1,8 +1,18 @@
 #!/bin/bash
+# Source: https://github.com/infraguide-org/setup-sandbox
+# Copyright (c) 2026 infraguide.org, MIT License
+
+set -e
+
+# no dialogs (debconf, needrestart) and no reading from stdin: the script itself
+# comes through the pipe of "curl | bash" and must not be consumed by apt
+export DEBIAN_FRONTEND=noninteractive
+export NEEDRESTART_MODE=a
+
 REGISTRY=registry.lab.nfgd.net:80
 IMAGE_NAME=$REGISTRY/quay/osism/ara-server:1.6.1
 
-apt-get update; apt-get install podman -y
+apt-get update; apt-get install -y podman </dev/null
 
 cat > /etc/containers/registries.conf  <<EOF
 [[registry]]
@@ -16,7 +26,7 @@ EOF
 
 podman volume create ara
 
-mkdir /etc/ara
+mkdir -p /etc/ara
 cat > /etc/ara/environment <<EOF
 ARA_ALLOWED_HOSTS=['127.0.0.1', 'loalhost', '10.14.0.25', 'recorder.services.lab.nfgd.net', 'recorder.lab.nfgd.net']
 # ARA_DEBUG=True

@@ -1,9 +1,17 @@
 #!/bin/bash
+# Source: https://github.com/infraguide-org/setup-sandbox
+# Copyright (c) 2026 infraguide.org, MIT License
+set -e
+
+# no dialogs (debconf, needrestart) and no reading from stdin: the script itself
+# comes through the pipe of "curl | bash" and must not be consumed by apt
+export DEBIAN_FRONTEND=noninteractive
+export NEEDRESTART_MODE=a
 
 # 1. Disable systemd-resolved to free up Port 53
 echo "Stopping systemd-resolved..."
-systemctl stop systemd-resolved
-systemctl disable systemd-resolved
+systemctl stop systemd-resolved    || true
+systemctl disable systemd-resolved || true
 
 # Ensure /etc/resolv.conf is a real file for the host to use
 rm -f /etc/resolv.conf
@@ -11,7 +19,8 @@ echo "nameserver 8.8.8.8" > /etc/resolv.conf
 
 # 2. Install Dnsmasq
 echo "Installing Dnsmasq..."
-apt update && apt install -y dnsmasq
+apt-get update
+apt-get install -y -o Dpkg::Options::=--force-confold dnsmasq </dev/null
 
 # 3. Create the Configuration
 echo "Configuring Dnsmasq..."
