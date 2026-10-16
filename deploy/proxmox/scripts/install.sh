@@ -7,13 +7,6 @@
 NFGD_HOME="/infraguide/setup-sandbox"
 REF="main"
 
-if [ -z "$LAB_NAME" ]
-  then
-    echo "REPO var is missing" >&2
-    exit 1
-fi
-REPO="infraguide-org/$LAB_NAME"
-exit
 ##############################################################################
 # Tools
 apt-get update
@@ -35,6 +28,11 @@ apt-get  install -y   \
  tmux            \
  vim             \
  yq
+
+##############################################################################
+# ssh-keygen
+ssh-keygen -t ed25519 -N '' -f ~/.ssh/id_ed25519
+cat /root/.ssh/id_ed25519.pub >> /home/debian/.ssh/authorized_keys
 
 ##############################################################################
 # Checkout
