@@ -289,7 +289,6 @@ cat "$KEY.pub"
 ---
 # Configure your Browser
 ## To use the SOCKS5 Proxy
-![bg right:45% 25%](https://infraguide.org/assets/logo/icon.svg)
 
 <style scoped>
 section { font-size: 20px; }
@@ -302,6 +301,16 @@ table { font-size: 20px; }
 | Chrome  | Launch flag      | Launch flag      | System proxy     |
 | Edge    | Launch flag      | Launch flag      | System proxy     |
 | Safari  | not available    | not available    | System proxy     |
+
+---
+# Configure your Browser
+## Proxy settings
+![bg right:45% 25%](https://infraguide.org/assets/logo/icon.svg)
+
+<style scoped>
+section { font-size: 20px; }
+table { font-size: 20px; }
+</style>
 
 | Setting                                 | Value       |
 |-----------------------------------------|-------------|
@@ -321,8 +330,7 @@ table { font-size: 20px; }
 section { font-size: 20px; }
 </style>
 
-Start the browser with a separate profile and the proxy flag, the settings are
-the same as in the previous table.
+Start the browser with a separate profile and the proxy flag.
 
 ```bat
 :: Windows
