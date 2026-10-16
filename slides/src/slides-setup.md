@@ -113,8 +113,6 @@ server_conf:
 
 ---
 # Scripts
-![bg right:45% 25%](https://infraguide.org/assets/logo/icon.svg)
-
 <style scoped>
 td:first-child {
   white-space: nowrap !important;
@@ -131,19 +129,9 @@ pre {
 | ⚙️ **print-create-env-commands**  | reads `conf/env.yaml` file and prints the commands required to create the full environment  |
 | ⚙️ **print-destroy-env-commands** | reads `conf/env.yaml` file, queries the current state, and prints the commands required to destroy the entire environment |
 
-
-```bash
-create-vm --id 10 --name dns.lab.nfgd.net \
-          --cpu 1 --ram 4096 --disks '[8]' \
-          --netconf '{
-  "mgmt0": {"ip": "10.14.0.10/24",  "macaddr": "bc:24:11:99:04:0a"},
-  "srvc0": {"ip": "10.34.10.10/24", "macaddr": "bc:24:11:99:06:0a"}
-}'
-```
-
 ---
 # How to use scripts
-![bg right:45% 25%](assets/pics/preparations/icon-easybuild.svg)
+![bg right:45% 25%](https://infraguide.org/assets/logo/icon.svg)
 
 ```bash
 # Create a new environment
@@ -155,16 +143,21 @@ print-destroy-env-commands | bash
 # If you need to rebuild only a set or a single server, use grep with a matching filter
 print-destroy-env-commands | grep <NODE_FILTER> | bash
 print-create-env-commands  | grep <NODE_FILTER> | bash
-```
 
+# Single VM
+create-vm --id 10 --name dns.lab.nfgd.net \
+          --cpu 1 --ram 4096 --disks '[8]' \
+          --netconf '{
+  "mgmt0": {"ip": "10.14.0.10/24",  "macaddr": "bc:24:11:99:04:0a"},
+  "srvc0": {"ip": "10.34.10.10/24", "macaddr": "bc:24:11:99:06:0a"}
+}'
+```
 
 ---
 # Prepare the lab environment
 ![bg right:40% 30%](assets/pics/preparations/icon-tools-hammer.svg)
 
 ```bash
-export LAB_NAME=<LAB_NAME> # lab-openstack, lab-ceph, ...
-
 # Install and Configure 
 curl -sSL nfgd.net/setup/sandbox     | bash; reboot
 
@@ -172,7 +165,7 @@ curl -sSL nfgd.net/setup/sandbox     | bash; reboot
 curl -sSL nfgd.net/setup/template-vm | bash
 
 # Create the full lab environment
-curl -sSL nfgd.net/setup/$LAB_NAME   | bash
+curl -sSL nfgd.net/setup/<LAB_NAME>  | bash
 ```
 
 ---
