@@ -4,9 +4,8 @@
 #
 ##############################################################################
 # vars
-DIR="conf"
+NFGD_HOME="/infraguide/setup-sandbox"
 REF="main"
-DEST="$DIR"
 
 if [ -z "$LAB_NAME" ]
   then
@@ -39,33 +38,8 @@ apt-get  install -y   \
 
 ##############################################################################
 # Checkout
-cd /root
-git clone https://github.com/infraguide-org/setup-sandbox.git
-
-cd setup-sandbox
-
-###############################################################################
-# Fetch the configs for the lab
-tmp="$(mktemp -d)"
-trap 'rm -rf "$tmp"' EXIT
-
-curl -fsSL "https://codeload.github.com/${REPO}/tar.gz/${REF}" \
-  | tar -xz -C "$tmp" --strip-components=1
-
-if [ ! -d "${tmp}/${DIR}" ]
-then
-  echo "Directory '${DIR}' not found in ${REPO}@${REF}" >&2
-  exit 1
-fi
-
-mkdir -p "$DEST"
-cp -a ${tmp}/${DIR}/* $DEST/
-
-##############################################################################
-# ssh config
-./scripts/print-ssh-config  >> ~/.ssh/config
-ssh-keygen -t ed25519 -N '' -f ~/.ssh/id_ed25519
-cat /root/.ssh/id_ed25519.pub >> /home/debian/.ssh/authorized_keys
+git clone https://github.com/infraguide-org/setup-sandbox.git "$NFGD_HOME"
+cd "$NFGD_HOME"
 
 ##############################################################################
 # Install proxmox

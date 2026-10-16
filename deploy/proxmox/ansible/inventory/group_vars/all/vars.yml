@@ -179,9 +179,10 @@ resources__files:
   - path: '/etc/profile.d/60-lab.sh'
     content: |
       #!/usr/bin/env bash
-      if [ "$EUID" -eq 0 ] && [ -d "/root/setup-sandbox/scripts" ]; then
-        if [[ ":$PATH:" != *":/root/setup-sandbox/scripts:"* ]]; then
-            export PATH="/root/setup-sandbox/scripts:$PATH"
+      NFGD_HOME="/infraguide/setup-sandbox"
+      if [ "$EUID" -eq 0 ] && [ -d "$NFGD_HOME/scripts" ]; then
+        if [[ ":$PATH:" != *":$NFGD_HOME/scripts:"* ]]; then
+            export PATH="$NFGD_HOME/scripts:$PATH"
         fi
       fi
 
