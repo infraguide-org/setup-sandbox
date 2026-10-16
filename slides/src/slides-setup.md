@@ -159,48 +159,156 @@ curl -sSL nfgd.net/setup/$LAB_NAME   | bash
 ```
 
 ---
-# Configure a Tunnel
-## To access environment
-![bg right:40% 30%](assets/pics/preparations/icon-identity-aware-proxy.svg)
+# Access the Lab Environment
+![bg right:30% 30%](assets/pics/preparations/icon-identity-aware-proxy.svg)
 
-```bash
-* Generate a new ECDSA key with **PuTTYgen** and save it on your system
-* Put the public key in ~/.ssh/authorized_keys on:
-  * hypervisor (root)
-  * deployment (deploy)
+The browser sends its traffic into a local port (`127.0.0.1:8888`), and SSH
+carries it through the hypervisor into the lab network.
 
-* Start PuTTY. Go to Connection -> SSH -> Auth -> Credentials. Load the Private Key
-* Go to Connection -> Data. Put "root" for "Auto-login username"
-* Go to Session. Put the IP of your hypervisor
-* Put the name for the session - "hypervisor". Save.
-* Press "Open" button, a new session should be opened
-
-* Create a new session with PuTTY
-  * Put 10.14.0.24 into "Host Name" field
-  * Under Connection -> Data, put "deploy" for "Auto-login username"
-  * Under Connection -> SSH -> Auth -> Credentials load the private key
-* Go to Connection -> SSH -> Tunnels
-  * Choose Dynamic
-  * Source Port: 8888
-  * Press "Add" button
-* Go to Connection -> Proxy
-  * Set type to "SSH to proxy and port forward"
-  * Set Proxy hostname to "hypervisor"
-  * Set port to 22
-* Go to Session
-  * Put "deployment" in "Saved Sessions"
-  * Press "Save"
-  * Press "Open"
+```text
++-----------+  SSH  +------------+  SSH  +------------+     +-------------+
+| Browser   |------>| hypervisor |------>| deployment |---->| Lab         |
+|           |       |            |       |            |     | Environment |
++-----------+       +------------+       +------------+     +-------------+
+Your PC             Bare-metal
+                    server
 ```
 
 ---
-# Configure Proxy
-![bg right:40% 30%](assets/pics/preparations/icon-identity-aware-proxy.svg)
+# Configure a Tunnel
+## Windows (PuTTY)
+
+<style scoped>
+section { font-size: 22px; }
+</style>
+
+* Generate a new ECDSA key with **PuTTYgen** and save it on your system
+* Put the public key in `~/.ssh/authorized_keys` on:
+  * hypervisor (`root`)
+  * deployment (`deploy`)
+* Create the two PuTTY sessions, `hypervisor` first, then `deployment`
+
+---
+# Configure a Tunnel
+## Windows (PuTTY) - sessions
+
+<style scoped>
+section { font-size: 18px; }
+table { font-size: 18px; }
+</style>
+
+| PuTTY category             | Field               | `hypervisor`         | `deployment`                  |
+|----------------------------|---------------------|----------------------|-------------------------------|
+| Session                    | Host Name           | IP of the hypervisor | IP of the deployment node     |
+| Connection -> Data         | Auto-login username | `root`               | `deploy`                      |
+| SSH -> Auth -> Credentials | Private key file    | your private key     | your private key              |
+| SSH -> Tunnels             | Source port         |                      | `8888`                        |
+| SSH -> Tunnels             | Type                |                      | Dynamic                       |
+| Connection -> Proxy        | Proxy type          |                      | SSH to proxy and port forward |
+| Connection -> Proxy        | Proxy hostname      |                      | `hypervisor`                  |
+| Connection -> Proxy        | Port                |                      | `22`                          |
+| Session                    | Saved Sessions      | `hypervisor`         | `deployment`                  |
+
+In "SSH -> Tunnels" press "Add" after setting source port and type.
+In "Session" press "Save" after entering the session name.
+
+---
+# Configure a Tunnel
+## Windows (PuTTY) - check
+
+<style scoped>
+section { font-size: 22px; }
+</style>
+
+Check that the SOCKS5 port is listening:
+
+```bat
+:: In cmd on your PC, with the deployment session open
+:: 127.0.0.1:8888 LISTENING means the tunnel is up, no line means it is not
+netstat -an | findstr 8888
+```
+
+---
+# Configure a Tunnel
+## Linux and macOS (OpenSSH)
+
+<style scoped>
+section { font-size: 20px; }
+</style>
+
 ```bash
-* Open Firefox
-* Go to Settings
-* Search for "proxy"
-* Choose "Manual Configuration"
-* Put "127.0.0.1" in SOCKS Host field, Port: 8888
-* Choose SOCKS v5
+# On your PC
+HYPERVISOR_IP=<IP of the hypervisor>
+DEPLOYMENT_IP=<IP of the deployment node>
+KEY=~/.ssh/infraguide-lab
+
+# Generate the key, readable only by you
+ssh-keygen -t ed25519 -f "$KEY"
+chmod 600 "$KEY"
+
+# Add the sessions to ~/.ssh/config
+cat >> ~/.ssh/config <<EOF
+Host hypervisor
+    HostName $HYPERVISOR_IP
+    User root
+    IdentityFile $KEY
+
+Host deployment
+    HostName $DEPLOYMENT_IP
+    User deploy
+    IdentityFile $KEY
+    ProxyJump hypervisor
+    DynamicForward 8888
+EOF
+
+# Show the public key, add it by hand to ~/.ssh/authorized_keys of root on the
+# hypervisor and of deploy on the deployment node
+cat "$KEY.pub"
+```
+
+---
+# Configure your Browser
+## To use the SOCKS5 Proxy
+
+<style scoped>
+section { font-size: 20px; }
+table { font-size: 20px; }
+</style>
+
+| Browser | Windows          | Linux            | macOS            |
+|---------|------------------|------------------|------------------|
+| Firefox | Network Settings | Network Settings | Network Settings |
+| Chrome  | Launch flag      | Launch flag      | System proxy     |
+| Edge    | Launch flag      | Launch flag      | System proxy     |
+| Safari  | not available    | not available    | System proxy     |
+
+| Setting                                 | Value       |
+|-----------------------------------------|-------------|
+| Proxy mode                              | Manual      |
+| SOCKS Host                              | 127.0.0.1   |
+| Port                                    | 8888        |
+| SOCKS version                           | v5          |
+| Proxy DNS when using SOCKS v5 (Firefox) | on          |
+| HTTP, HTTPS and FTP proxy               | empty       |
+
+---
+# Configure your Browser
+## Chrome and Edge launch flags
+
+<style scoped>
+section { font-size: 20px; }
+</style>
+
+Start the browser with a separate profile and the proxy flag, the settings are
+the same as in the previous table.
+
+```bat
+:: Windows
+chrome.exe     --proxy-server="socks5://127.0.0.1:8888" --user-data-dir="%TEMP%\lab-profile"
+msedge.exe     --proxy-server="socks5://127.0.0.1:8888" --user-data-dir="%TEMP%\lab-profile"
+```
+```bash
+# Linux
+google-chrome  --proxy-server="socks5://127.0.0.1:8888" --user-data-dir=/tmp/lab-profile
+microsoft-edge --proxy-server="socks5://127.0.0.1:8888" --user-data-dir=/tmp/lab-profile
 ```
