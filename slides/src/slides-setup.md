@@ -140,28 +140,20 @@ print-create-env-commands  | grep <NODE_FILTER> | bash
 
 
 ---
-# Prepare the sandbox
+# Prepare the lab environment
 ![bg right:40% 30%](assets/pics/preparations/icon-tools-hammer.svg)
 
 ```bash
-# On the bare-metal node as root
+export LAB_NAME=<LAB_NAME> # lab-openstack, lab-ceph, ...
 
 # Install and Configure 
-curl -sSL nfgd.net/setup/sandbox | bash
+curl -sSL nfgd.net/setup/sandbox     | bash; reboot
 
 # Import a VM to be used as template
 curl -sSL nfgd.net/setup/template-vm | bash
-```
-
----
-# Create a workshop environment
-![bg right:40% 30%](assets/pics/preparations/icon-tools-hammer.svg)
-
-```bash
-# On the baremetal node as root                                             📋
 
 # Create the full lab environment
-curl -sSL nfgd.net/setup/lab-env
+curl -sSL nfgd.net/setup/$LAB_NAME   | bash
 ```
 
 ---
