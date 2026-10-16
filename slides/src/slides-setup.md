@@ -22,6 +22,22 @@ style: |
     width:  50%;
     height: 50%;    
   }
+  table {
+    border-collapse: collapse;
+  }
+  th, td {
+    border: 1px solid #9fc9de;
+  }
+  th {
+    background-color: #2b6f94;
+    color: #ffffff;
+  }
+  tr:nth-child(odd) td {
+    background-color: #ffffff;
+  }
+  tr:nth-child(even) td {
+    background-color: #e3f1f8;
+  }
 ---
 <script type="module">
 import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
@@ -100,17 +116,16 @@ server_conf:
 ![bg right:45% 25%](https://infraguide.org/assets/logo/icon.svg)
 
 <style scoped>
-table, thead, tbody, tr, th, td {
-  background-color: transparent !important;
-  border: none !important;
-}
 td:first-child {
   white-space: nowrap !important;
   vertical-align: top; 
 }
+pre {
+  font-size: 0.6em;
+}
 </style>
 
-| | |
+| Script | Description |
 | :--- | :--- |
 | ⚙️ **create-vm**    | creates a new VM defined by parameters                    |
 | ⚙️ **print-create-env-commands**  | reads `conf/env.yaml` file and prints the commands required to create the full environment  |
@@ -118,12 +133,14 @@ td:first-child {
 
 
 ```bash
-create-vm --id 10 --name dns.lab.nfgd.net --cpu 1 --ram 4096 --disks '[8]' --netconf '
-     {
-       "mgmt0": {"ip": "10.14.0.10/24",  "macaddr": "bc:24:11:99:04:0a"},
-       "srvc0": {"ip": "10.34.10.10/24", "macaddr": "bc:24:11:99:06:0a"}
-     }'
+create-vm --id 10 --name dns.lab.nfgd.net \
+          --cpu 1 --ram 4096 --disks '[8]' \
+          --netconf '{
+  "mgmt0": {"ip": "10.14.0.10/24",  "macaddr": "bc:24:11:99:04:0a"},
+  "srvc0": {"ip": "10.34.10.10/24", "macaddr": "bc:24:11:99:06:0a"}
+}'
 ```
+
 ---
 # How to use scripts
 ![bg right:45% 25%](assets/pics/preparations/icon-easybuild.svg)
@@ -177,6 +194,7 @@ Your PC             Bare-metal
 ---
 # Configure a Tunnel
 ## Windows (PuTTY)
+![bg right:45% 25%](https://infraguide.org/assets/logo/icon.svg)
 
 <style scoped>
 section { font-size: 22px; }
@@ -215,6 +233,7 @@ In "Session" press "Save" after entering the session name.
 ---
 # Configure a Tunnel
 ## Windows (PuTTY) - check
+![bg right:45% 25%](https://infraguide.org/assets/logo/icon.svg)
 
 <style scoped>
 section { font-size: 22px; }
@@ -231,6 +250,7 @@ netstat -an | findstr 8888
 ---
 # Configure a Tunnel
 ## Linux and macOS (OpenSSH)
+![bg right:45% 25%](https://infraguide.org/assets/logo/icon.svg)
 
 <style scoped>
 section { font-size: 20px; }
@@ -269,6 +289,7 @@ cat "$KEY.pub"
 ---
 # Configure your Browser
 ## To use the SOCKS5 Proxy
+![bg right:45% 25%](https://infraguide.org/assets/logo/icon.svg)
 
 <style scoped>
 section { font-size: 20px; }
@@ -294,6 +315,7 @@ table { font-size: 20px; }
 ---
 # Configure your Browser
 ## Chrome and Edge launch flags
+![bg right:45% 25%](https://infraguide.org/assets/logo/icon.svg)
 
 <style scoped>
 section { font-size: 20px; }
