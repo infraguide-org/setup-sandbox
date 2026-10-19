@@ -154,18 +154,50 @@ create-vm --id 10 --name dns.lab.nfgd.net \
 ```
 
 ---
-# Prepare the lab environment
+# Prepare the Sandbox
+## If you have your own bare-metal host
 ![bg right:40% 30%](assets/pics/preparations/icon-tools-hammer.svg)
 
+<style scoped>
+section { font-size: 20px; }
+</style>
+
+Install **Debian 13 (Trixie)** first, then prepare the sandbox
+
 ```bash
-# Install and Configure 
-curl -sSL nfgd.net/setup/sandbox     | bash; reboot
+# On the bare-metal node as root
+# The node reboots into Proxmox at the end
+curl -fsSL nfgd.net/setup/sandbox | bash && reboot
+```
 
+Reconnect after the reboot, then build the lab environment
+
+```bash
 # Import a VM to be used as template
-curl -sSL nfgd.net/setup/template-vm | bash
+curl -fsSL nfgd.net/setup/template-vm | bash
 
-# Create the full lab environment
-curl -sSL nfgd.net/setup/<LAB_NAME>  | bash
+# Setup the lab environment
+curl -fsSL nfgd.net/setup/<LAB_NAME>  | bash # lab-openstack, lab-ceph, ...
+```
+
+---
+# Prepare the Sandbox
+## If cloud-init is available
+![bg right:40% 30%](assets/pics/preparations/icon-easybuild.svg)
+
+<style scoped>
+section { font-size: 20px; }
+</style>
+
+If your system / provider supports cloud-init, there is a more convenient
+way: pass the predefined `user-data.yaml` through to cloud-init. It runs the
+same steps unattended, the reboot included, so nothing is left to run by hand.
+
+Review it, then paste it into the user-data field.
+
+```bash
+# Review
+curl -fsSL nfgd.net/setup/<LAB_NAME>/user-data.yaml # lab-openstack, lab-ceph, ...
 ```
 
 ---
@@ -193,7 +225,7 @@ Your PC             Bare-metal
 section { font-size: 22px; }
 </style>
 
-* Generate a new ECDSA key with **PuTTYgen** and save it on your system
+* Generate a new Ed25519 key with **PuTTYgen** and save it on your system
 * Put the public key in `~/.ssh/authorized_keys` on:
   * hypervisor (`root`)
   * deployment (`deploy`)
@@ -277,6 +309,22 @@ EOF
 # Show the public key, add it by hand to ~/.ssh/authorized_keys of root on the
 # hypervisor and of deploy on the deployment node
 cat "$KEY.pub"
+```
+
+---
+# Configure a Tunnel
+## Linux and macOS (OpenSSH) - check
+![bg right:45% 25%](https://infraguide.org/assets/logo/icon.svg)
+
+<style scoped>
+section { font-size: 22px; }
+</style>
+
+After establishing the connection to deployment, check the tunnel on your PC:
+
+```bash
+# A LISTEN line for 127.0.0.1 port 8888 means the tunnel is up, no line means it is not
+netstat -an | grep 8888
 ```
 
 ---
