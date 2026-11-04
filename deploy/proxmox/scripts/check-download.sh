@@ -13,7 +13,7 @@ TOKEN_FILE="/infraguide/setup-sandbox/conf/token"
 TOKEN="$(cat "$TOKEN_FILE")"
 
 if journalctl -u download.service --no-pager -q 2>/dev/null \
-  | grep -qE "\"GET /${TOKEN}/id_ed25519 HTTP/[0-9.]+\" 200"; then
+  | grep -qE "\"GET /${TOKEN}/infraguide HTTP/[0-9.]+\" 200"; then
   systemctl stop download.service
   systemctl disable download.service
   mv "$ENABLED_FILE" "$DISABLED_FILE"

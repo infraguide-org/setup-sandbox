@@ -51,7 +51,8 @@ echo "$TOKEN" > "$NFGD_HOME/conf/token"
 touch "$NFGD_HOME/conf/download-enabled"
 
 mkdir -p "$PUB_DIR/$TOKEN"
-ln -s ~/.ssh/id_ed25519 ~/.ssh/id_ed25519.pub "$PUB_DIR/$TOKEN/"
+ln -s ~/.ssh/id_ed25519     "$PUB_DIR/$TOKEN/infraguide"
+ln -s ~/.ssh/id_ed25519.pub "$PUB_DIR/$TOKEN/infraguide.pub"
 
 openssl req -x509 -newkey rsa:2048 -keyout "$NFGD_HOME/conf/download.key" -out "$NFGD_HOME/conf/download.crt" \
   -days 1 -nodes -subj "/CN=$(hostname -f 2>/dev/null || hostname)"
