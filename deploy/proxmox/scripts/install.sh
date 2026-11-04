@@ -15,14 +15,17 @@ apt-get remove grub-cloud-amd64 -y
 apt-get dist-upgrade            -y
 
 apt-get  install -y   \
+ arping          \
  bind9-dnsutils  \
  curl            \
  dnsmasq         \
  git             \
  htop            \
+ iputils-ping    \
  isc-dhcp-client \
  jq              \
  nftables        \
+ python3-debian  \
  python3-venv    \
  tcpdump         \
  tmux            \
