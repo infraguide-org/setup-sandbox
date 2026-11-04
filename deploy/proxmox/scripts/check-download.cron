@@ -1,1 +1,3 @@
+# Source: https://github.com/infraguide-org/setup-sandbox
+# Copyright (c) 2026 infraguide.org, MIT License
 * * * * * root /infraguide/setup-sandbox/deploy/proxmox/scripts/check-download.sh

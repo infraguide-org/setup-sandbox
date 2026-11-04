@@ -1,3 +1,6 @@
+# Source: https://github.com/infraguide-org/setup-sandbox
+# Copyright (c) 2026 infraguide.org, MIT License
+
 [Unit]
 Description=Temporary HTTPS server for downloading the bootstrap SSH keypair
 After=network.target
