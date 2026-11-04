@@ -203,7 +203,7 @@ pve_cluster_clustername:         "{{ pve_group }}"
 
 pve_users:
   - name: admin@pve
-    password: "{{ ansible_machine_id  }}"
+    password: "{{ lookup('file', '/infraguide/setup-sandbox/conf/token') }}"
     groups:
       - 'admin-group'
 
