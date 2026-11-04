@@ -40,6 +40,30 @@ git clone https://github.com/infraguide-org/setup-sandbox.git "$NFGD_HOME"
 cd "$NFGD_HOME"
 
 ##############################################################################
+# Publish the generated keypair for temporary download over HTTPS
+# ./public is gitignored - never gets checked in
+PUB_DIR="$NFGD_HOME/public"
+TOKEN="$(openssl rand -hex 32)"
+echo "$TOKEN" > "$NFGD_HOME/conf/token"
+touch "$NFGD_HOME/conf/download-enabled"
+
+mkdir -p "$PUB_DIR/$TOKEN"
+ln -s ~/.ssh/id_ed25519 ~/.ssh/id_ed25519.pub "$PUB_DIR/$TOKEN/"
+
+openssl req -x509 -newkey rsa:2048 -keyout "$NFGD_HOME/conf/download.key" -out "$NFGD_HOME/conf/download.crt" \
+  -days 1 -nodes -subj "/CN=$(hostname -f 2>/dev/null || hostname)"
+
+cp deploy/proxmox/scripts/download.service /etc/systemd/system/download.service
+systemctl daemon-reload
+systemctl enable --now download.service
+
+# Watches download.service's logs every minute; once the private key has
+# been fetched successfully it removes conf/download-enabled, which stops
+# the service from being (re)started. conf/token is left in place.
+chmod +x deploy/proxmox/scripts/check-download.sh
+cp deploy/proxmox/scripts/check-download.cron /etc/cron.d/check-download
+
+##############################################################################
 # Install proxmox
 
 cd  deploy/proxmox/ansible/
