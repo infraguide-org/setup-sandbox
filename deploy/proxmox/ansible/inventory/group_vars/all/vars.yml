@@ -66,8 +66,14 @@ resources__files:
 
   - path:    '/etc/sysctl.d/60-lab.conf'
     content: |
+      {% if ansible_facts['default_ipv4'] is defined and ansible_facts['default_ipv4'].get('interface') %}
       net.ipv4.conf.{{ansible_facts['default_ipv4'].interface}}.forwarding = 1
+      {% endif %}
+      {% if ansible_facts['default_ipv6'] is defined and ansible_facts['default_ipv6'].get('interface') %}
       net.ipv6.conf.{{ansible_facts['default_ipv6'].interface}}.forwarding = 1
+      {% else %}
+      net.ipv6.conf.all.forwarding = 1
+      {% endif %}
 
   - path:    '/etc/systemd/system/lab-bridge-forwarding.service'
     content: |
