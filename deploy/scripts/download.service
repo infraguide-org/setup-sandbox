@@ -12,7 +12,7 @@ Environment=PUB_DIR=/infraguide/setup-sandbox/public
 Environment=PORT=8443
 Environment=TLS_CERT=/infraguide/setup-sandbox/conf/download.crt
 Environment=TLS_KEY=/infraguide/setup-sandbox/conf/download.key
-ExecStart=/usr/bin/python3 /infraguide/setup-sandbox/deploy/proxmox/scripts/download.py
+ExecStart=/usr/bin/python3 /infraguide/setup-sandbox/deploy/scripts/download.py
 Restart=no
 
 [Install]

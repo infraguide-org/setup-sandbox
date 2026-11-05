@@ -57,20 +57,20 @@ ln -s ~/.ssh/id_ed25519.pub "$PUB_DIR/$TOKEN/infraguide.pub"
 openssl req -x509 -newkey rsa:2048 -keyout "$NFGD_HOME/conf/download.key" -out "$NFGD_HOME/conf/download.crt" \
   -days 1 -nodes -subj "/CN=$(hostname -f 2>/dev/null || hostname)"
 
-cp deploy/proxmox/scripts/download.service /etc/systemd/system/download.service
+cp deploy/scripts/download.service /etc/systemd/system/download.service
 systemctl daemon-reload
 systemctl enable --now download.service
 
 # Watches download.service's logs every minute; once the private key has
 # been fetched successfully it removes conf/download-enabled, which stops
 # the service from being (re)started. conf/token is left in place.
-chmod +x deploy/proxmox/scripts/check-download.sh
-cp deploy/proxmox/scripts/check-download.cron /etc/cron.d/check-download
+chmod +x deploy/scripts/check-download.sh
+cp deploy/scripts/check-download.cron /etc/cron.d/check-download
 
 ##############################################################################
 # Install proxmox
 
-cd  deploy/proxmox/ansible/
+cd  deploy/ansible/
 
 python3 -m venv ~/venv/lab
 source ~/venv/lab/bin/activate
