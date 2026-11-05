@@ -52,6 +52,13 @@ SEARCHDOMAIN="$SEARCHDOMAIN $DOMAIN"
 
 ##############################################################################
 # go
+
+# a second run (e.g. after a failed boot) skips the VMs that already exist
+if qm status "$VMID" &> /dev/null; then
+    echo "VM $VMID ($NAME) already exists, skipping"
+    exit 0
+fi
+
 VENDOR_FILE="$SNIPPET_DIR/vm-${VMID}-vendor.yaml"
 # VENDOR_FILE="$SNIPPET_DIR/vm-${VMID}-vendor.yaml.debug"
 

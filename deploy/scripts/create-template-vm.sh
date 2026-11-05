@@ -1,4 +1,7 @@
 #!/bin/bash
+# Source: https://github.com/infraguide-org/setup-sandbox
+# Copyright (c) 2026 infraguide.org, MIT License
+set -euo pipefail
 
 # Install post-pve-install.sh                                               📋
 # bash -c "$(curl -fsSL https://raw.githubusercontent.com/community-scripts/ProxmoxVE/main/tools/pve/post-pve-install.sh)"
@@ -8,7 +11,13 @@
 
 TEMPL_ID=9000
 
-curl -sS -o /tmp/noble-server-cloudimg-amd64.img \
+# a second run (e.g. after a failed boot) keeps the existing template
+if qm status "$TEMPL_ID" &> /dev/null; then
+    echo "Template $TEMPL_ID already exists, skipping"
+    exit 0
+fi
+
+curl -fsS -o /tmp/noble-server-cloudimg-amd64.img \
 https://cloud-images.ubuntu.com/noble/current/noble-server-cloudimg-amd64.img
 
 qm create $TEMPL_ID \
