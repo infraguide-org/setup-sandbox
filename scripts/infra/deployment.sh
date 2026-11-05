@@ -22,8 +22,8 @@ cat >> ~/.ssh/config <<EOF
 Host hypervisor hypervisor.lab.nfgd.net
   User root
 
-Host *.mgmt *.mgmt.lab.nfgd.net *.lab.nfgd.net
-  User  deploy
+Host *.mgmt
+  HostName %h.lab.nfgd.net
 
 Host *
   User                  deploy
@@ -36,6 +36,7 @@ pipx install tmuxp
 cat >> ~/.profile <<EOF
 
 alias lab-stack='tmuxp load -y ~/lab-openstack/conf/tmuxp.yaml'
+alias o=openstack
 EOF
 
 # cd ~
@@ -55,8 +56,6 @@ cat >> ~/.profile <<"EOF"
 # openstack vars
 
 export OPENSTACK_DIR=~/openstack
-KOLLA_ANSIBLE_RELEASE=20 # OS 2025.1
-VENV_PATH=~/venv/kolla-ansible-$KOLLA_ANSIBLE_RELEASE
 
 if [ -z "$VIRTUAL_ENV" -a -L ~/venv/openstack ]
 then
