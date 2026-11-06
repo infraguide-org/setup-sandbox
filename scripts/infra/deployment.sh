@@ -12,8 +12,8 @@ export NEEDRESTART_MODE=a
 apt-get update
 
 apt-get install -y \
-  crudini          \
-  pipx </dev/null
+  pipx             \
+  </dev/null
 
 SYS_USER_NAME=deploy
 
@@ -32,54 +32,5 @@ Host *
 EOF
 
 pipx install tmuxp
-
-cat >> ~/.profile <<EOF
-
-alias lab-stack='tmuxp load -y ~/lab-openstack/conf/tmuxp.yaml'
-alias o=openstack
-EOF
-
-# cd ~
-# git clone https://github.com/infraguide-org/lab-openstack.git
-
-mkdir -p lab-openstack && \
-curl -sSL https://github.com/infraguide-org/lab-openstack/archive/HEAD.tar.gz | \
-tar -xz -C lab-openstack --strip-components=1
-
-
-
-ln -s ~/lab-openstack/deploy/kolla-ansible openstack
-ln -s ~/lab-openstack/deploy/cephadm       ceph
-
-cat >> ~/.profile <<"EOF"
-##############################################################################
-# openstack
-
-export OPENSTACK_DIR=~/openstack
-
-if [ -z "$VIRTUAL_ENV" -a -L ~/venv/openstack ]
-then
-  source ~/venv/openstack/bin/activate
-fi
-export ARA_HOME=$VIRTUAL_ENV/lib/python3.12/site-packages/ara
-
-
-ADMIN_OPENRC_FILE=$OPENSTACK_DIR/custom-config/lab/admin-openrc.sh
-if [ -f $ADMIN_OPENRC_FILE ]
-then
-  source  $ADMIN_OPENRC_FILE
-fi
-
-export PATH=~/openstack/bin/:$PATH
-export PS1="[\u@\h \W|\[\e[1;32m\]\$OS_USERNAME.\$OS_PROJECT_NAME\[\e[m\]]\$"
-source <(openstack complete)
-
-function o
-{
-  openstack $@  | cat
-}
-complete -F _openstack o
-
-EOF
 
 AS_SYS_USER
