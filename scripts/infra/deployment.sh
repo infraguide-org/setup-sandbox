@@ -53,7 +53,7 @@ ln -s ~/lab-openstack/deploy/cephadm       ceph
 
 cat >> ~/.profile <<"EOF"
 ##############################################################################
-# openstack vars
+# openstack
 
 export OPENSTACK_DIR=~/openstack
 
@@ -73,6 +73,13 @@ fi
 export PATH=~/openstack/bin/:$PATH
 export PS1="[\u@\h \W|\[\e[1;32m\]\$OS_USERNAME.\$OS_PROJECT_NAME\[\e[m\]]\$"
 source <(openstack complete)
+
+function o
+{
+  openstack $@  | cat
+}
+complete -F _openstack o
+
 EOF
 
 AS_SYS_USER
