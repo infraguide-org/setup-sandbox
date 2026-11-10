@@ -127,9 +127,9 @@ resources__files:
         bridge_ports eth0
         bridge_stp off
         bridge_fd 0
-
       {% endfor %}
 
+      source /etc/network/interfaces.d/*
   - path: '/etc/dnsmasq.d/60-lab.conf'
     content: |
       # Interfaces to listen on for DNS
