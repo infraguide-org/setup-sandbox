@@ -33,6 +33,7 @@ Usage: run-testinfra [--limit PATTERN[,PATTERN...]] [pytest args]
 import argparse
 import fnmatch
 import pathlib
+import pwd
 import re
 import subprocess
 import sys
@@ -86,7 +87,14 @@ with open(env_conf) as f:
 # a pattern that matches nothing is most likely a typo
 unmatched = [p for p, m in patterns.items() if not any(m(s["hostname"]) for s in servers)]
 if unmatched:
-    sys.exit(f"No server matches: {', '.join(unmatched)}")
+    # an unquoted ~name is expanded by the shell to the home of user "name"
+    homes = defaultdict(list)
+    for u in pwd.getpwall():
+        homes[u.pw_dir].append(u.pw_name)
+    hints = [f"\n  {p} is the home of {', '.join('~' + n for n in homes[p])}, "
+             f"probably expanded by the shell, quote it, e.g. --limit '~{homes[p][-1]}'"
+             for p in unmatched if p in homes]
+    sys.exit(f"No server matches: {', '.join(unmatched)}" + "".join(hints))
 servers = [s for s in servers if any(m(s["hostname"]) for m in patterns.values())]
 
 groups = {}
