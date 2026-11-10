@@ -12,10 +12,9 @@ to the list to keep it:
       testinfra: [default, dns]
 
 A profile is a directory with tests, or a group of other profiles in
-profiles.yaml (e.g. default: [cloud-init, docker]). They are looked up in
-  lab/tests/testinfra/   lab specific, copied from the lab repo by create-env.sh
-  tests/testinfra/       generic, from setup-sandbox
-the lab comes first, so it can replace a generic profile or group.
+profiles.yaml (e.g. default: [cloud-init, docker]), both in tests/testinfra/.
+create-env.sh copies the tests of the lab on top of the common ones there,
+lab files with the same name replace the common ones.
 pytest runs once per directory, against the servers that use it.
 
 --limit restricts the run to some servers, in the notation of ansible:
@@ -46,11 +45,8 @@ import yaml
 # config
 script_dir = pathlib.Path(__file__).parent.resolve()
 env_conf   = script_dir.parent / "conf" / "env.yaml"
-# lookup order, first match wins
-tests_dirs = [
-    script_dir.parent / "lab" / "tests" / "testinfra",
-    script_dir.parent / "tests" / "testinfra",
-]
+tests_dir  = script_dir.parent / "tests" / "testinfra"
+groups_conf = tests_dir / "profiles.yaml"
 
 DEFAULT_PROFILE = "default"
 
@@ -62,11 +58,9 @@ def expand(name, groups, seen=()):
         sys.exit(f"Profile loop: {' -> '.join(seen + (name,))}")
     if name in groups:
         return [d for sub in groups[name] for d in expand(sub, groups, seen + (name,))]
-    for d in tests_dirs:
-        if (d / name).is_dir():
-            return [d / name]
-    sys.exit(f"Unknown profile: {name}, neither a group in profiles.yaml nor a directory in "
-             + ", ".join(str(d) for d in tests_dirs))
+    if (tests_dir / name).is_dir():
+        return [tests_dir / name]
+    sys.exit(f"Unknown profile: {name}, neither a group in {groups_conf} nor a directory in {tests_dir}")
 
 def matcher(pattern):
     """ansible notation: ~REGEX or a glob pattern, both matched with re.match."""
@@ -95,12 +89,10 @@ if unmatched:
     sys.exit(f"No server matches: {', '.join(unmatched)}")
 servers = [s for s in servers if any(m(s["hostname"]) for m in patterns.values())]
 
-# generic groups first, the lab ones override them
 groups = {}
-for d in reversed(tests_dirs):
-    if (d / "profiles.yaml").is_file():
-        with open(d / "profiles.yaml") as f:
-            groups.update(yaml.safe_load(f) or {})
+if groups_conf.is_file():
+    with open(groups_conf) as f:
+        groups = yaml.safe_load(f) or {}
 
 profiles = defaultdict(list)  # test directory -> [hostname]
 for s in servers:
@@ -116,7 +108,7 @@ with tempfile.NamedTemporaryFile("w", prefix="ssh-config.") as ssh_config:
 
     rc = 0
     for p, hosts in profiles.items():
-        print(f"### profile {p.name} ({p.parent}): {', '.join(hosts)}", flush=True)
+        print(f"### profile {p.name}: {', '.join(hosts)}", flush=True)
         rc |= subprocess.call([
             "py.test",
             f"--ssh-config={ssh_config.name}",
