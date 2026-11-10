@@ -17,11 +17,24 @@ profiles.yaml (e.g. default: [cloud-init, docker]). They are looked up in
   tests/testinfra/       generic, from setup-sandbox
 the lab comes first, so it can replace a generic profile or group.
 pytest runs once per directory, against the servers that use it.
-Arguments are passed through to pytest.
 
-Usage: run-testinfra [pytest args]
+--limit restricts the run to some servers, in the notation of ansible:
+hostnames or glob patterns, or a regular expression after "~" (matched
+from the start of the hostname), separated by commas. All other arguments
+are passed through to pytest.
+
+Usage: run-testinfra [--limit PATTERN[,PATTERN...]] [pytest args]
+
+  run-testinfra                                all servers
+  run-testinfra --limit dns                    one server
+  run-testinfra --limit 'compute*'             a group of servers, glob
+  run-testinfra --limit '~(controller|network)0[12]'  a group of servers, regex
+  run-testinfra --limit dns,proxy -x           several, stop at the first failure
 """
+import argparse
+import fnmatch
 import pathlib
+import re
 import subprocess
 import sys
 import tempfile
@@ -55,10 +68,32 @@ def expand(name, groups, seen=()):
     sys.exit(f"Unknown profile: {name}, neither a group in profiles.yaml nor a directory in "
              + ", ".join(str(d) for d in tests_dirs))
 
+def matcher(pattern):
+    """ansible notation: ~REGEX or a glob pattern, both matched with re.match."""
+    try:
+        if pattern.startswith("~"):
+            return re.compile(pattern[1:]).match
+        return re.compile(fnmatch.translate(pattern)).match
+    except re.error as e:
+        sys.exit(f"Bad pattern {pattern}: {e}")
+
+##############################################################################
+# args
+parser = argparse.ArgumentParser(add_help=False)
+parser.add_argument("--limit", default="*")
+args, pytest_args = parser.parse_known_args()
+patterns = {p: matcher(p) for p in (p.strip() for p in args.limit.split(",")) if p}
+
 ##############################################################################
 # go
 with open(env_conf) as f:
     servers = yaml.safe_load(f)["server_conf"]
+
+# a pattern that matches nothing is most likely a typo
+unmatched = [p for p, m in patterns.items() if not any(m(s["hostname"]) for s in servers)]
+if unmatched:
+    sys.exit(f"No server matches: {', '.join(unmatched)}")
+servers = [s for s in servers if any(m(s["hostname"]) for m in patterns.values())]
 
 # generic groups first, the lab ones override them
 groups = {}
@@ -86,7 +121,7 @@ with tempfile.NamedTemporaryFile("w", prefix="ssh-config.") as ssh_config:
             "py.test",
             f"--ssh-config={ssh_config.name}",
             "--hosts=" + ",".join(f"ssh://{h}" for h in hosts),
-            "-v", str(p), *sys.argv[1:],
+            "-v", str(p), *pytest_args,
         ])
 
 sys.exit(rc)
