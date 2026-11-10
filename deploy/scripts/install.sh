@@ -80,6 +80,9 @@ source ~/venv/lab/bin/activate
 pip3 install -U pip
 pip3 install -r requirements.txt
 
+# Install testinfra for scripts/run-testinfra
+pip3 install -r "$NFGD_HOME/tests/testinfra/requirements.txt"
+
 # Install requiremnets for ansible
 ansible-galaxy role       install -r requirements.yml
 ansible-galaxy collection install -r requirements.yml
