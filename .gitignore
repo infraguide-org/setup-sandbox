@@ -3,6 +3,7 @@
 removeme/
 public/
 conf/
+lab/
 slides/dist/
 *.swp
 *.swo

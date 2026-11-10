@@ -1,0 +1,92 @@
+#!/usr/bin/env python3
+# Source: https://github.com/infraguide-org/setup-sandbox
+# Copyright (c) 2026 infraguide.org, MIT License
+"""Run testinfra profiles against the servers in server_conf of env.yaml.
+
+The profiles are set per server. Without a testinfra field, the profile
+"default" is used. With it, only the listed profiles run, add "default"
+to the list to keep it:
+
+  server_conf:
+    - hostname:  "dns"
+      testinfra: [default, dns]
+
+A profile is a directory with tests, or a group of other profiles in
+profiles.yaml (e.g. default: [cloud-init, docker]). They are looked up in
+  lab/tests/testinfra/   lab specific, copied from the lab repo by create-env.sh
+  tests/testinfra/       generic, from setup-sandbox
+the lab comes first, so it can replace a generic profile or group.
+pytest runs once per directory, against the servers that use it.
+Arguments are passed through to pytest.
+
+Usage: run-testinfra [pytest args]
+"""
+import pathlib
+import subprocess
+import sys
+import tempfile
+from collections import defaultdict
+
+import yaml
+
+##############################################################################
+# config
+script_dir = pathlib.Path(__file__).parent.resolve()
+env_conf   = script_dir.parent / "conf" / "env.yaml"
+# lookup order, first match wins
+tests_dirs = [
+    script_dir.parent / "lab" / "tests" / "testinfra",
+    script_dir.parent / "tests" / "testinfra",
+]
+
+DEFAULT_PROFILE = "default"
+
+##############################################################################
+# functions
+def expand(name, groups, seen=()):
+    """Resolve a profile name to the test directories behind it."""
+    if name in seen:
+        sys.exit(f"Profile loop: {' -> '.join(seen + (name,))}")
+    if name in groups:
+        return [d for sub in groups[name] for d in expand(sub, groups, seen + (name,))]
+    for d in tests_dirs:
+        if (d / name).is_dir():
+            return [d / name]
+    sys.exit(f"Unknown profile: {name}, neither a group in profiles.yaml nor a directory in "
+             + ", ".join(str(d) for d in tests_dirs))
+
+##############################################################################
+# go
+with open(env_conf) as f:
+    servers = yaml.safe_load(f)["server_conf"]
+
+# generic groups first, the lab ones override them
+groups = {}
+for d in reversed(tests_dirs):
+    if (d / "profiles.yaml").is_file():
+        with open(d / "profiles.yaml") as f:
+            groups.update(yaml.safe_load(f) or {})
+
+profiles = defaultdict(list)  # test directory -> [hostname]
+for s in servers:
+    for name in s.get("testinfra") or [DEFAULT_PROFILE]:
+        for p in expand(name, groups):
+            if s["hostname"] not in profiles[p]:
+                profiles[p].append(s["hostname"])
+
+# same ssh settings as print-ssh-config: user deploy, management IP, no host key check
+with tempfile.NamedTemporaryFile("w", prefix="ssh-config.") as ssh_config:
+    ssh_config.write(subprocess.check_output([script_dir / "print-ssh-config"], text=True))
+    ssh_config.flush()
+
+    rc = 0
+    for p, hosts in profiles.items():
+        print(f"### profile {p.name} ({p.parent}): {', '.join(hosts)}", flush=True)
+        rc |= subprocess.call([
+            "py.test",
+            f"--ssh-config={ssh_config.name}",
+            "--hosts=" + ",".join(f"ssh://{h}" for h in hosts),
+            "-v", str(p), *sys.argv[1:],
+        ])
+
+sys.exit(rc)
