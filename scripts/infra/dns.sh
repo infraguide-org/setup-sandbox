@@ -77,4 +77,5 @@ hostsdir=/var/lib/dnsmasq/hosts.d
 # log-queries
 EOF
 
-systemctl enable dnsmasq
+systemctl enable  dnsmasq
+systemctl restart dnsmasq
