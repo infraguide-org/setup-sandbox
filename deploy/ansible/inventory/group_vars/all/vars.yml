@@ -78,7 +78,7 @@ resources__files:
   - path:    '/etc/systemd/system/lab-bridge-forwarding.service'
     content: |
       [Unit]
-      Description=Lav Enable IP Forwarding on Bridges
+      Description=Lab Enable IP Forwarding on Bridges
       After=systemd-networkd.service network-online.target
       Wants=systemd-networkd.service
 
