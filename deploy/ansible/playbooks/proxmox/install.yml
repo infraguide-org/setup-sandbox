@@ -1,3 +1,5 @@
+# Source: https://github.com/infraguide-org/setup-sandbox
+# Copyright (c) 2026 infraguide.org, MIT License
 ---
 - hosts: all
   name: Set Prerequisites
@@ -15,6 +17,24 @@
         line: "{{ ansible_facts['default_ipv4']['address'] }} {{ ansible_facts['fqdn'] }} {{ ansible_facts['hostname'] }}"
         state: present
         backup: true
+    - name: Create bridge brpblc0 with the default interface and its IPv4 address
+      ansible.builtin.copy:
+        dest: /etc/network/interfaces.d/brpblc0.off
+        owner: root
+        group: root
+        mode: '0644'
+        content: |
+          # auto {{ ansible_facts['default_ipv4']['interface'] }}
+          # iface {{ ansible_facts['default_ipv4']['interface'] }} inet manual
+          #
+          # auto brpblc0
+          # iface brpblc0 inet static
+          #     address {{ ansible_facts['default_ipv4']['address'] }}/{{ ansible_facts['default_ipv4']['prefix'] }}
+          #     gateway {{ ansible_facts['default_ipv4']['gateway'] }}
+          #     bridge-ports {{ ansible_facts['default_ipv4']['interface'] }}
+          #     bridge-stp off
+          #     bridge-fd 0
+      when: ansible_facts['default_ipv4']['interface'] != 'brpblc0'
 
 - name: Configure systemd user ssh-agent
   hosts: all
