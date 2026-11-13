@@ -45,8 +45,8 @@ cd "$NFGD_HOME"
 
 ##############################################################################
 # Publish the generated keypair for temporary download over HTTPS
-# ./public is gitignored - never gets checked in
-PUB_DIR="$NFGD_HOME/public"
+# ./download is gitignored - never gets checked in
+PUB_DIR="$NFGD_HOME/download"
 TOKEN="$(openssl rand -hex 32)"
 echo "$TOKEN" > "$NFGD_HOME/conf/token"
 touch "$NFGD_HOME/conf/download-enabled"

@@ -8,7 +8,7 @@ ConditionPathExists=/infraguide/setup-sandbox/conf/download-enabled
 
 [Service]
 Type=simple
-Environment=PUB_DIR=/infraguide/setup-sandbox/public
+Environment=PUB_DIR=/infraguide/setup-sandbox/download
 Environment=PORT=8443
 Environment=TLS_CERT=/infraguide/setup-sandbox/conf/download.crt
 Environment=TLS_KEY=/infraguide/setup-sandbox/conf/download.key

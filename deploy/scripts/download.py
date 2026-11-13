@@ -6,7 +6,7 @@ import http.server
 import os
 import ssl
 
-PUB_DIR = os.environ.get("PUB_DIR", "/infraguide/setup-sandbox/public")
+PUB_DIR = os.environ.get("PUB_DIR", "/infraguide/setup-sandbox/download")
 PORT = int(os.environ.get("PORT", "8443"))
 TLS_CERT = os.environ.get("TLS_CERT", "/infraguide/setup-sandbox/conf/download.crt")
 TLS_KEY = os.environ.get("TLS_KEY", "/infraguide/setup-sandbox/conf/download.key")
