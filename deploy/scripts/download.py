@@ -11,7 +11,17 @@ PORT = int(os.environ.get("PORT", "8443"))
 TLS_CERT = os.environ.get("TLS_CERT", "/infraguide/setup-sandbox/conf/download.crt")
 TLS_KEY = os.environ.get("TLS_KEY", "/infraguide/setup-sandbox/conf/download.key")
 
-handler = functools.partial(http.server.SimpleHTTPRequestHandler, directory=PUB_DIR)
+class NoListingHandler(http.server.SimpleHTTPRequestHandler):
+    # Hide the token folder: no listing for the root of PUB_DIR,
+    # normal listing below it (only reachable if you know the token)
+    def list_directory(self, path):
+        if os.path.realpath(path) == os.path.realpath(PUB_DIR):
+            self.send_error(404)
+            return None
+        return super().list_directory(path)
+
+
+handler = functools.partial(NoListingHandler, directory=PUB_DIR)
 httpd = http.server.HTTPServer(("0.0.0.0", PORT), handler)
 
 ctx = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
